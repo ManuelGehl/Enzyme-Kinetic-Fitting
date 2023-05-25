@@ -1,0 +1,126 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 25 16:33:12 2023
+
+@author: Manuel Gehl
+"""
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.optimize import curve_fit
+import numpy as np
+
+#%%
+
+#Specifies Michaelis-Menten equation for the curve fitting process
+def Michaelis_Menten(substrate, vmax, km): 
+    vi = vmax * substrate/(km + substrate)
+    return vi
+
+#%%
+
+#Name of the mutant used for accessing excel sheet and naming of plots and files
+mutant_name = "WT" 
+#Molecular weight of enzyme [mg/µmole]
+mol_weight = 32.80175
+
+filepath = os.path.join(r"add_your_file_path")
+excel = pd.ExcelFile(filepath) #Loads excel file
+kinetics = pd.read_excel(excel,mutant_name) #Loads excel tab with mutant name
+#%%
+
+#Extracts concentration of substrates, reaction speed, stdev
+#Adjust the interval and column names to your need
+xdata_nadh = kinetics.loc[0:6,"nadh"]
+ydata_nadh = kinetics.loc[0:6,"mean"]
+stdev_nadh = kinetics.loc[0:6,"stdev"]
+xdata_h4f = kinetics.loc[8:14,"h4f"]
+ydata_h4f = kinetics.loc[8:14,"mean"]
+stdev_h4f = kinetics.loc[8:14,"stdev"]
+
+#Generates plot of data for visual inspection of data
+fig, ax = plt.subplots(1,2)
+ax[0].errorbar(xdata_nadh, ydata_nadh, yerr = stdev_nadh, fmt = "o", capsize = 3, zorder= 5)
+ax[1].errorbar(xdata_h4f, ydata_h4f, yerr = stdev_h4f, fmt = "o", capsize = 3, zorder= 5)
+ax[0].set_xlabel("NADH")
+ax[1].set_xlabel("CH2=H4F")
+ax[0].set_ylabel("U/mg")
+
+#%%
+    
+#Kurve fitting for substrate 1 (in this case NADH)
+popt, pcov = curve_fit(Michaelis_Menten, xdata_nadh, ydata_nadh)
+vmax = popt[0]
+km = popt[1]
+#Specifies standard deviation of the curve fitting process
+stdev_curve = np.sqrt(np.diag(pcov))
+
+#Generates smooth line for plotting
+xdata_nadh_smooth = np.linspace(np.min(xdata_nadh), np.max(xdata_nadh), 1000)
+fit_nadh_smooth = Michaelis_Menten(xdata_nadh_smooth, vmax, km)
+
+#Calculation of means of kinetic constants and stdev
+km_array = np.array([km - stdev_curve[1], km, km + stdev_curve[1]]) #Creates array of Km values +/- stdev
+vmax_array = np.array([vmax - stdev_curve[0], vmax, vmax + stdev_curve[0]]) #Creates array of Vmax values +/- stdev
+kcat_array = vmax_array * mol_weight #Calculates kcat [1/min]
+kcat_km_array =  kcat_array / km_array #Calculates kcat/km [1/min*µmole]
+   
+
+#%%
+
+#Plotting of curve fitting results for substrate 1 (NADH)
+sns.set_theme(style = "ticks")
+fig, ax = plt.subplots(1,1)
+sns.set_theme(style = "ticks")
+
+ax.set_xlabel("$NADH\ concentration\ [µM]$")
+ax.set_ylabel("Specific activity [U/mg]")
+ax.errorbar(xdata_nadh, ydata_nadh, yerr = stdev_nadh, fmt = "o", capsize = 3, zorder= 5)
+ax.plot(xdata_nadh_smooth, fit_nadh_smooth)
+ax.set_title("hMfr Wildtype")
+#Adjust decimal places and position of kinetic constants in the figure.
+ax.annotate(f"$V_{{max}}$ = {vmax:.1f} +/- {stdev_curve[0]:.1f} \n" 
+            f"$K_m$ = {km:.1f} +/- {stdev_curve[1]:.1f} \n"
+            f"$K_{{cat}}$ = {kcat_array.mean():.0f} +/- {kcat_array.std():.0f} \n"
+            f"$K_{{cat}}/K_m$ = {kcat_km_array.mean():.1f} +/- {kcat_km_array.std():.1f} \n",
+            xy = (85,0))
+
+#%%
+    
+#Kurve fitting for substrate 2 (in this case CH2=H4F)
+popt, pcov = curve_fit(Michaelis_Menten, xdata_h4f, ydata_h4f)
+vmax = popt[0]
+km = popt[1]
+#Specifies standard deviation of the curve fitting process
+stdev_curve = np.sqrt(np.diag(pcov))
+
+#Generates smooth line for plotting
+xdata_h4f_smooth = np.linspace(np.min(xdata_h4f), np.max(xdata_h4f), 1000)
+fit_h4f_smooth = Michaelis_Menten(xdata_h4f_smooth, vmax, km)
+
+#Calculation of means of kinetic constants and stdev
+km_array = np.array([km - stdev_curve[1], km, km + stdev_curve[1]]) #Creates array of Km values +/- stdev
+vmax_array = np.array([vmax - stdev_curve[0], vmax, vmax + stdev_curve[0]]) #Creates array of Vmax values +/- stdev
+kcat_array = vmax_array * mol_weight #Calculates kcat [1/min]
+kcat_km_array =  kcat_array / km_array #Calculates kcat/km [1/min*µmole]
+   
+
+#%%
+
+#Plotting of curve fitting results for substrate 1 (NADH)
+sns.set_theme(style = "ticks")
+fig, ax = plt.subplots(1,1)
+sns.set_theme(style = "ticks")
+
+ax.set_xlabel("$Methylene-H_4F\ concentration\ [µM]$")
+ax.set_ylabel("Specific activity [U/mg]")
+ax.errorbar(xdata_h4f, ydata_h4f, yerr = stdev_h4f, fmt = "o", capsize = 3, zorder= 5)
+ax.plot(xdata_h4f_smooth, fit_h4f_smooth)
+ax.set_title("hMfr Wildtype")
+#Adjust decimal places and position of kinetic constants in the figure.
+ax.annotate(f"$V_{{max}}$ = {vmax:.1f} +/- {stdev_curve[0]:.1f} \n" 
+            f"$K_m$ = {km:.0f} +/- {stdev_curve[1]:.0f} \n"
+            f"$K_{{cat}}$ = {kcat_array.mean():.0f} +/- {kcat_array.std():.0f} \n"
+            f"$K_{{cat}}/K_m$ = {kcat_km_array.mean():.1f} +/- {kcat_km_array.std():.1f} \n",
+            xy = (340,0))
