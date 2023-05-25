@@ -1,2 +1,2 @@
 # Enzyme-kinetic-fitting
-Takes Excel files with specific activity measurements for enzymes (and corresponding mutants) and does a curve fitting to the Michaelis-Menten equation.
+Takes Excel files with specific activity measurements for enzymes (and corresponding mutants) and does a curve fitting to the Michaelis-Menten equation. I used this code for determining the kinetic constants of wild type and mutated enzymes, e.g. in  Gehl, M, Demmer, U, Ermler, U, Shima, S. Crystal structure of FAD-independent methylene-tetrahydrofolate reductase from Mycobacterium hassiacum. Proteins. 2023; 1- 12. doi:10.1002/prot.26504
