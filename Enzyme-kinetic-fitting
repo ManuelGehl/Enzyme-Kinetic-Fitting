@@ -72,7 +72,6 @@ kcat_km_array =  kcat_array / km_array #Calculates kcat/km [1/min*µmole]
 #Plotting of curve fitting results for substrate 1 (NADH)
 sns.set_theme(style = "ticks")
 fig, ax = plt.subplots(1,1)
-sns.set_theme(style = "ticks")
 
 ax.set_xlabel("$NADH\ concentration\ [µM]$")
 ax.set_ylabel("Specific activity [U/mg]")
@@ -111,7 +110,6 @@ kcat_km_array =  kcat_array / km_array #Calculates kcat/km [1/min*µmole]
 #Plotting of curve fitting results for substrate 1 (NADH)
 sns.set_theme(style = "ticks")
 fig, ax = plt.subplots(1,1)
-sns.set_theme(style = "ticks")
 
 ax.set_xlabel("$Methylene-H_4F\ concentration\ [µM]$")
 ax.set_ylabel("Specific activity [U/mg]")
