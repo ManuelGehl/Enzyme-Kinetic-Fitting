@@ -6,7 +6,7 @@
 
 The Enzyme Kinetic Fitting repository provides a Python script that takes Excel files with specific activity measurements for enzymes (and corresponding mutants) and performs a curve fitting to the Michaelis-Menten equation. I have used this code to determine the kinetic constants of wild-type and mutant enzymes. For example in:
 * [Crystal structure of FAD-independent methylene-tetrahydrofolate reductase from Mycobacterium hassiacum](https://onlinelibrary.wiley.com/doi/10.1002/prot.26504)
-* [Convergent evolution of (βα)8-barrel fold methylene-tetrahydropterin reductases utilizing a common catalytic mechanism](https://www.biorxiv.org/content/10.1101/2023.09.18.558202v1)
+* [Mutational and structural studies of (βα)8-barrel fold methylene-tetrahydropterin reductases utilizing a common catalytic mechanism](https://onlinelibrary.wiley.com/doi/10.1002/pro.5018)
 
 ## How It Works
 
